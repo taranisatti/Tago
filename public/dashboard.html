@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="View your TAGO profile. Review your previous orders, shipping addresses, and account details.">
+  <title>TAGO | My Dashboard</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <div class="navbar">
+      <div class="logo-container">
+        <a href="/index.html" class="logo-link">
+          <img src="/images/logo.svg" alt="TAGO Logo" class="brand-logo-img">
+        </a>
+      </div>
+
+      <!-- Live Search -->
+      <div class="search-bar-container">
+        <span class="search-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+      </div>
+
+      <!-- Navigation & Actions -->
+      <nav>
+        <ul class="nav-links" id="authLinks">
+          <!-- Dynamically populated by main.js -->
+          <li><a href="/auth.html" id="navLoginLink">Login / Register</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="/cart.html" class="cart-icon-container" title="View Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <main class="fade-in">
+    <div class="dashboard-container-layout">
+      
+      <!-- Professional Sidebar -->
+      <aside class="dashboard-sidebar">
+        <div class="sidebar-user-summary">
+          <div class="sidebar-avatar" id="sidebarAvatar">U</div>
+          <div class="sidebar-user-details">
+            <h4 id="sidebarUserName">User Name</h4>
+            <p id="sidebarUserEmail">user@example.com</p>
+          </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <button class="sidebar-nav-btn" data-tab="orders">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            Order History
+          </button>
+          <button class="sidebar-nav-btn" data-tab="profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Profile Settings
+          </button>
+          <button class="sidebar-nav-btn" data-tab="addresses">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Address Book
+          </button>
+          <button class="sidebar-nav-btn" data-tab="security">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Account Security
+          </button>
+          <button class="sidebar-nav-btn" data-tab="preferences">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0L20 8M4 14l3 3 3-3"></path></svg>
+            Notification Preferences
+          </button>
+          <hr class="sidebar-divider">
+          <button class="sidebar-nav-btn logout-btn-item" id="logoutBtnDashboard">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Log Out
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Content Area -->
+      <section class="dashboard-content-area">
+        
+        <!-- Tab: Orders -->
+        <div class="dashboard-tab-panel" id="panel-orders">
+          <div class="panel-header">
+            <h2>Order History</h2>
+            <p>Track your previous orders and check order updates.</p>
+          </div>
+          <div id="ordersList" class="orders-list">
+            <p style="color: var(--text-light);">Loading your orders...</p>
+          </div>
+        </div>
+
+        <!-- Tab: Profile Settings -->
+        <div class="dashboard-tab-panel" id="panel-profile">
+          <div class="panel-header">
+            <h2>Profile Settings</h2>
+            <p>Update your personal information and profile picture URL.</p>
+          </div>
+          
+          <form id="profileSettingsForm" class="settings-form">
+            <div class="form-grid">
+              <div class="form-group full-width" style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div class="profile-avatar-large" id="profileAvatarLarge">U</div>
+                <div style="flex: 1;">
+                  <label for="profilePictureUrl" style="margin-bottom: 0.25rem;">Profile Picture URL</label>
+                  <input type="url" id="profilePictureUrl" class="form-control" placeholder="https://images.unsplash.com/photo-..." style="font-size: 0.9rem;">
+                  <span style="font-size: 0.75rem; color: var(--text-light);">Provide a public image link (Unsplash, Imgur, etc.)</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="profileFullName">Full Name</label>
+                <input type="text" id="profileFullName" class="form-control" required placeholder="Enter full name">
+              </div>
+              <div class="form-group">
+                <label for="profileEmail">Email Address</label>
+                <input type="email" id="profileEmail" class="form-control" required placeholder="email@example.com">
+              </div>
+              <div class="form-group">
+                <label for="profilePhone">Phone Number</label>
+                <input type="tel" id="profilePhone" class="form-control" placeholder="+1 (555) 000-0000">
+              </div>
+              <div class="form-group">
+                <label for="profileUsername">Username (Immutable)</label>
+                <input type="text" id="profileUsername" class="form-control" disabled style="background-color: var(--light-gray); cursor: not-allowed;">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 1.5rem;">Save Changes</button>
+          </form>
+        </div>
+
+        <!-- Tab: Address Book -->
+        <div class="dashboard-tab-panel" id="panel-addresses">
+          <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2>Address Book</h2>
+              <p>Manage your saved shipping and billing destinations.</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="addNewAddressBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Add New Address
+            </button>
+          </div>
+          
+          <!-- Address List -->
+          <div id="addressesListGrid" class="addresses-list-grid">
+            <!-- Populated dynamically via dashboard.js -->
+            <p style="color: var(--text-light);">Loading addresses...</p>
+          </div>
+
+          <!-- Address Form Container (Modal or Inline Form) -->
+          <div id="addressFormModal" class="address-form-modal">
+            <div class="address-form-modal-content">
+              <div class="modal-header">
+                <h3 id="addressModalTitle">Add New Address</h3>
+                <button class="close-modal-btn" id="closeAddressModalBtn">&times;</button>
+              </div>
+              <form id="addressForm">
+                <input type="hidden" id="addressIdHidden">
+                <div class="form-grid">
+                  <div class="form-group full-width">
+                    <label for="addrFullName">Recipient Name</label>
+                    <input type="text" id="addrFullName" class="form-control" required placeholder="John Doe">
+                  </div>
+                  <div class="form-group full-width">
+                    <label for="addrLine">Street Address</label>
+                    <input type="text" id="addrLine" class="form-control" required placeholder="123 Main St, Apt 4">
+                  </div>
+                  <div class="form-group">
+                    <label for="addrCity">City</label>
+                    <input type="text" id="addrCity" class="form-control" required placeholder="New York">
+                  </div>
+                  <div class="form-group">
+                    <label for="addrState">State / Province</label>
+                    <input type="text" id="addrState" class="form-control" required placeholder="NY">
+                  </div>
+                  <div class="form-group">
+                    <label for="addrPostalCode">Postal / ZIP Code</label>
+                    <input type="text" id="addrPostalCode" class="form-control" required placeholder="10001">
+                  </div>
+                  <div class="form-group">
+                    <label for="addrCountry">Country</label>
+                    <input type="text" id="addrCountry" class="form-control" required placeholder="United States">
+                  </div>
+                  <div class="form-group full-width">
+                    <label for="addrPhone">Phone Number</label>
+                    <input type="tel" id="addrPhone" class="form-control" placeholder="+1 (555) 000-0000">
+                  </div>
+                  <div class="form-group full-width checkbox-row">
+                    <input type="checkbox" id="addrIsDefault">
+                    <label for="addrIsDefault" style="display: inline; cursor: pointer;">Set as default shipping address</label>
+                  </div>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                  <button type="button" class="btn btn-outline" id="cancelAddressModalBtn">Cancel</button>
+                  <button type="submit" class="btn btn-primary" id="saveAddressModalBtn">Save Address</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Security -->
+        <div class="dashboard-tab-panel" id="panel-security">
+          <div class="panel-header">
+            <h2>Account Security</h2>
+            <p>Update your password to keep your account secure.</p>
+          </div>
+          
+          <form id="changePasswordForm" class="settings-form">
+            <div class="form-grid" style="max-width: 500px;">
+              <div class="form-group full-width">
+                <label for="securityCurrentPassword">Current Password</label>
+                <input type="password" id="securityCurrentPassword" class="form-control" required placeholder="Enter current password">
+              </div>
+              <div class="form-group full-width">
+                <label for="securityNewPassword">New Password (6+ characters)</label>
+                <input type="password" id="securityNewPassword" class="form-control" required minlength="6" placeholder="Enter new password">
+              </div>
+              <div class="form-group full-width">
+                <label for="securityConfirmPassword">Confirm New Password</label>
+                <input type="password" id="securityConfirmPassword" class="form-control" required minlength="6" placeholder="Re-enter new password">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 1.5rem;">Change Password</button>
+          </form>
+        </div>
+
+        <!-- Tab: Preferences -->
+        <div class="dashboard-tab-panel" id="panel-preferences">
+          <div class="panel-header">
+            <h2>Notification Preferences</h2>
+            <p>Manage how we communicate order updates and newsletters with you.</p>
+          </div>
+          
+          <form id="preferencesForm" class="settings-form">
+            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+              <div class="pref-checkbox-card">
+                <input type="checkbox" id="prefOrderUpdates" checked>
+                <div class="checkbox-desc">
+                  <label for="prefOrderUpdates">Order Status Notifications</label>
+                  <p>Receive email alerts for order placements, processing states, and tracking numbers.</p>
+                </div>
+              </div>
+              
+              <div class="pref-checkbox-card">
+                <input type="checkbox" id="prefPromotions">
+                <div class="checkbox-desc">
+                  <label for="prefPromotions">Special Offers & Newsletters</label>
+                  <p>Get notified about flash discounts, seasonal arrivals, and style updates.</p>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 2rem;">Save Preferences</button>
+          </form>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4 class="footer-logo-container">
+          <img src="/images/logo.svg" alt="TAGO Logo" class="brand-logo-img">
+        </h4>
+        <p>Curating exceptional products for modern life. Our focus on minimal aesthetics and high-quality materials ensures each piece is both beautiful and built to last.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop Collections</h4>
+        <ul>
+          <li><a href="/index.html">All Products</a></li>
+          <li><a href="/index.html?category=T-Shirts">Premium T-Shirts</a></li>
+          <li><a href="/index.html?category=Hoodies">Cozy Hoodies</a></li>
+          <li><a href="/index.html?category=Backpacks">Travel Backpacks</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Customer Care</h4>
+        <ul>
+          <li><a href="#">Shipping & Returns</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 TAGO E-Commerce. All rights reserved. Designed for excellence.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

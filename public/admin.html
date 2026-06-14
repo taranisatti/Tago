@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TAGO Admin Dashboard. Manage products, orders, and view registered customers.">
+  <title>TAGO | Administrative Dashboard</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+  <style>
+    /* Admin Dashboard Specific Premium Styles */
+    .admin-container {
+      max-width: 1300px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .analytics-card {
+      background-color: var(--secondary-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      padding: 1.5rem;
+      box-shadow: var(--box-shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    }
+
+    .analytics-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--box-shadow-md);
+    }
+
+    .analytics-card-title {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .analytics-card-value {
+      font-size: 1.85rem;
+      font-family: 'Outfit';
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0;
+    }
+
+    .analytics-card-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .low-stock-warning {
+      color: #f5222d !important;
+      font-weight: 600;
+    }
+
+    .admin-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .admin-header-row h2 {
+      font-family: 'Outfit';
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 0;
+    }
+
+    .admin-table-container {
+      background-color: var(--secondary-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--box-shadow-sm);
+      overflow-x: auto;
+      margin-bottom: 2.5rem;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .admin-table th, .admin-table td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    .admin-table th {
+      background-color: #fcfbfe;
+      font-family: 'Outfit';
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .admin-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .admin-table tr:hover td {
+      background-color: #faf9fc;
+    }
+
+    .admin-product-thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--border-radius-sm);
+      object-fit: cover;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Modals */
+    .admin-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      backdrop-filter: blur(2px);
+    }
+
+    .admin-modal.show {
+      display: flex;
+    }
+
+    .admin-modal-content {
+      background-color: var(--secondary-color);
+      border-radius: var(--border-radius-md);
+      width: 100%;
+      max-width: 550px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--box-shadow-lg);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .admin-modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-modal-header h3 {
+      font-family: 'Outfit';
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 0;
+    }
+
+    .admin-modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-light);
+      line-height: 1;
+    }
+
+    .admin-modal-body {
+      padding: 1.5rem;
+    }
+
+    .admin-modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      background-color: #faf9fc;
+      border-bottom-left-radius: var(--border-radius-md);
+      border-bottom-right-radius: var(--border-radius-md);
+    }
+
+    .btn-action-container {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.75rem;
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      border: 1px solid transparent;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .btn-edit {
+      background-color: var(--primary-color);
+      color: var(--accent-dark);
+      border-color: var(--primary-color);
+    }
+
+    .btn-edit:hover {
+      background-color: var(--border-color);
+    }
+
+    .btn-delete {
+      background-color: #fff1f0;
+      color: #f5222d;
+      border-color: #ffa39e;
+    }
+
+    .btn-delete:hover {
+      background-color: #f5222d;
+      color: #ffffff;
+      border-color: #f5222d;
+    }
+
+    .btn-view {
+      background-color: #f0f5ff;
+      color: #2f54eb;
+      border-color: #adc6ff;
+    }
+
+    .btn-view:hover {
+      background-color: #2f54eb;
+      color: #ffffff;
+      border-color: #2f54eb;
+    }
+
+    .btn-add-product {
+      background-color: var(--accent-color);
+      color: #ffffff;
+      padding: 0.55rem 1.1rem;
+      border-radius: var(--border-radius-md);
+      font-family: 'Outfit';
+      font-weight: 600;
+      font-size: 0.85rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: opacity var(--transition-speed) ease;
+    }
+
+    .btn-add-product:hover {
+      opacity: 0.9;
+    }
+
+    /* Form Styles */
+    .admin-form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .admin-form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .admin-form-input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid var(--border-color);
+      font-family: inherit;
+      font-size: 0.85rem;
+      transition: border-color var(--transition-speed) ease;
+    }
+
+    .admin-form-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    /* Status Badges */
+    .status-pill {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .status-pending { background-color: #f9f0ff; color: #722ed1; border: 1.5px solid #d3adf7; }
+    .status-processing { background-color: #e6f7ff; color: #1890ff; border: 1.5px solid #91d5ff; }
+    .status-shipped { background-color: #fffbe6; color: #fa8c16; border: 1.5px solid #ffe58f; }
+    .status-delivered { background-color: #f6ffed; color: #52c41a; border: 1.5px solid #b7eb8f; }
+    .status-cancelled { background-color: #fff1f0; color: #f5222d; border: 1.5px solid #ffa39e; }
+
+    .status-select {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.5rem;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: #ffffff;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .status-select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+    }
+
+    /* Order details items list */
+    .order-detail-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .order-detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .order-detail-item:last-child {
+      border-bottom: none;
+    }
+
+    @media (max-width: 768px) {
+      .admin-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .admin-table th, .admin-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+      }
+      .btn-sm {
+        padding: 0.35rem 0.5rem;
+      }
+      .analytics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <div class="navbar">
+      <div class="logo-container">
+        <a href="/index.html" class="logo-link">
+          <img src="/images/logo.svg" alt="TAGO Logo" class="brand-logo-img">
+        </a>
+        <span style="font-size: 0.75rem; background-color: var(--accent-color); color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700; margin-left: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Admin</span>
+      </div>
+
+      <!-- Live Search (inactive on admin page) -->
+      <div class="search-bar-container" style="opacity: 0.5; pointer-events: none;">
+        <span class="search-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </span>
+        <input type="text" class="search-input" placeholder="Search..." disabled>
+      </div>
+
+      <nav>
+        <ul class="nav-links" id="authLinks">
+          <!-- Dynamically populated by main.js -->
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="/cart.html" class="cart-icon-container" title="View Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <main class="fade-in admin-container">
+    <div class="dashboard-container-layout">
+      
+      <!-- Administrative Sidebar -->
+      <aside class="dashboard-sidebar">
+        <div class="sidebar-user-summary">
+          <div class="sidebar-avatar" id="sidebarAvatar">A</div>
+          <div class="sidebar-user-details">
+            <h4 id="sidebarUserName">Admin Name</h4>
+            <p id="sidebarUserEmail">admin@tago.com</p>
+          </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <button class="sidebar-nav-btn active" data-tab="overview">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+            Overview
+          </button>
+          <button class="sidebar-nav-btn" data-tab="products">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+            Products
+          </button>
+          <button class="sidebar-nav-btn" data-tab="orders">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            Orders
+          </button>
+          <button class="sidebar-nav-btn" data-tab="customers">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Customers
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Main Content Dynamic Panels -->
+      <section class="dashboard-content-panel">
+        
+        <!-- Panel 1: Overview / Analytics -->
+        <div class="tab-panel active" id="panel-overview">
+          <div class="admin-header-row">
+            <h2>Analytics Overview</h2>
+          </div>
+          
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <span class="analytics-card-title">Total Revenue</span>
+              <h3 class="analytics-card-value" id="statRevenue">₹0</h3>
+              <span class="analytics-card-subtitle">Lifetime earnings</span>
+            </div>
+            <div class="analytics-card">
+              <span class="analytics-card-title">Total Orders</span>
+              <h3 class="analytics-card-value" id="statOrders">0</h3>
+              <span class="analytics-card-subtitle">Placed orders</span>
+            </div>
+            <div class="analytics-card">
+              <span class="analytics-card-title">Total Products</span>
+              <h3 class="analytics-card-value" id="statProducts">0</h3>
+              <span class="analytics-card-subtitle">Items in inventory</span>
+            </div>
+            <div class="analytics-card">
+              <span class="analytics-card-title">Low Stock Alert</span>
+              <h3 class="analytics-card-value" id="statLowStock">0</h3>
+              <span class="analytics-card-subtitle" id="statLowStockSubtitle">Products (stock &le; 5)</span>
+            </div>
+            <div class="analytics-card">
+              <span class="analytics-card-title">Total Customers</span>
+              <h3 class="analytics-card-value" id="statCustomers">0</h3>
+              <span class="analytics-card-subtitle">Registered users</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Products Management -->
+        <div class="tab-panel" id="panel-products">
+          <div class="admin-header-row">
+            <h2>Products Inventory</h2>
+            <button class="btn-add-product" id="openAddProductBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Add New Product
+            </button>
+          </div>
+          
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width: 80px;">Image</th>
+                  <th>Product Name</th>
+                  <th>Category</th>
+                  <th style="text-align: right;">Price</th>
+                  <th style="text-align: right;">Stock</th>
+                  <th style="text-align: center; width: 180px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminProductsTableBody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Panel 3: Orders Management -->
+        <div class="tab-panel" id="panel-orders">
+          <div class="admin-header-row">
+            <h2>Customer Orders</h2>
+          </div>
+          
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th style="text-align: right;">Amount</th>
+                  <th>Status</th>
+                  <th style="text-align: center; width: 140px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminOrdersTableBody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Panel 4: Customers List -->
+        <div class="tab-panel" id="panel-customers">
+          <div class="admin-header-row">
+            <h2>Registered Customers</h2>
+          </div>
+          
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Registration Date</th>
+                  <th style="text-align: right;">Total Orders</th>
+                </tr>
+              </thead>
+              <tbody id="adminCustomersTableBody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Product Add/Edit Modal -->
+  <div class="admin-modal" id="productModal">
+    <div class="admin-modal-content">
+      <div class="admin-modal-header">
+        <h3 id="productModalTitle">Add Product</h3>
+        <button class="admin-modal-close" id="closeProductModalBtn">&times;</button>
+      </div>
+      <form id="productForm">
+        <div class="admin-modal-body">
+          <input type="hidden" id="modalProductId">
+          
+          <div class="admin-form-group">
+            <label for="modalProdName">Product Name *</label>
+            <input type="text" id="modalProdName" class="admin-form-input" placeholder="e.g. Minimalist Cotton T-Shirt" required>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="modalProdCategory">Category *</label>
+            <input type="text" id="modalProdCategory" class="admin-form-input" placeholder="e.g. T-Shirts" required>
+          </div>
+
+          <div class="admin-form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <label for="modalProdPrice">Price (₹) *</label>
+              <input type="number" id="modalProdPrice" class="admin-form-input" placeholder="e.g. 999" min="0" required>
+            </div>
+            <div>
+              <label for="modalProdStock">Stock Quantity *</label>
+              <input type="number" id="modalProdStock" class="admin-form-input" placeholder="e.g. 25" min="0" required>
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="modalProdImage">Image URL</label>
+            <input type="url" id="modalProdImage" class="admin-form-input" placeholder="https://images.unsplash.com/...">
+            <div id="imagePreviewContainer" style="display: none; margin-top: 0.5rem; text-align: center;">
+              <img id="modalProdImagePreview" src="" alt="Product Preview" style="max-height: 120px; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color); object-fit: cover;">
+            </div>
+            <div id="imageWarning" style="display: none; color: #fa8c16; font-size: 0.75rem; font-weight: 600; margin-top: 0.25rem;">
+              ⚠️ Warning: Image failed to load or is not a valid HTTP/HTTPS URL.
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="modalProdDesc">Description</label>
+            <textarea id="modalProdDesc" class="admin-form-input" placeholder="Provide product details..." style="resize: vertical; min-height: 80px;"></textarea>
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelProductModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveProductModalBtn">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div class="admin-modal" id="orderDetailsModal">
+    <div class="admin-modal-content" style="max-width: 600px;">
+      <div class="admin-modal-header">
+        <h3>Order Details</h3>
+        <button class="admin-modal-close" id="closeOrderModalBtn">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.85rem; margin-bottom: 1.5rem; background-color: #faf9fc; padding: 1rem; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color);">
+          <div>
+            <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 0.25rem;">Order Metadata:</div>
+            <div>ID: <span id="detailOrderId" style="font-family: monospace;">-</span></div>
+            <div>Date: <span id="detailOrderDate">-</span></div>
+          </div>
+          <div>
+            <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 0.25rem;">Customer Details:</div>
+            <div>Username: <span id="detailCustName">-</span></div>
+            <div>Email: <span id="detailCustEmail">-</span></div>
+          </div>
+        </div>
+
+        <div style="font-size: 0.85rem; margin-bottom: 1.5rem;">
+          <div style="font-weight: 600; color: var(--text-dark); margin-bottom: 0.25rem;">Shipping Address:</div>
+          <div id="detailShippingAddr" style="color: var(--text-main);">-</div>
+        </div>
+
+        <div>
+          <div style="font-weight: 600; color: var(--text-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">Items:</div>
+          <div id="detailOrderItemsContainer" class="order-detail-items">
+            <!-- Items rendered dynamically -->
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; font-weight: 700; font-family: 'Outfit'; font-size: 1.1rem; border-top: 2px solid var(--border-color); padding-top: 1rem; margin-top: 1rem; color: var(--text-dark);">
+            <span>Total Paid</span>
+            <span id="detailOrderTotal">₹0</span>
+          </div>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="btn btn-secondary" id="closeOrderModalFooterBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footers -->
+  <footer>
+    <div class="footer-bottom">
+      <p>&copy; 2026 TAGO E-Commerce. All rights reserved. Designed for administrative excellence.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="View your TAGO shopping cart. Add or remove items, adjust quantities, and check totals before checking out.">
+  <title>TAGO | Shopping Cart</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <div class="navbar">
+      <div class="logo-container">
+        <a href="/index.html" class="logo-link">
+          <img src="/images/logo.svg" alt="TAGO Logo" class="brand-logo-img">
+        </a>
+      </div>
+
+      <!-- Live Search -->
+      <div class="search-bar-container">
+        <span class="search-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+      </div>
+
+      <!-- Navigation & Actions -->
+      <nav>
+        <ul class="nav-links" id="authLinks">
+          <!-- Dynamically populated by main.js -->
+          <li><a href="/auth.html" id="navLoginLink">Login / Register</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="/cart.html" class="cart-icon-container" title="View Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <main class="fade-in">
+    <h1 style="font-size: 2.2rem; margin-bottom: 2rem;">Shopping Cart</h1>
+
+    <!-- Cart Layout Container -->
+    <div id="cartLayout" class="cart-layout" style="display: none;">
+      <!-- Cart Items List (Dynamic) -->
+      <div id="cartItemsContainer" class="cart-items-container">
+        <!-- Filled dynamically via cart.js -->
+      </div>
+
+      <!-- Cart Totals Card (Dynamic) -->
+      <div class="cart-summary-card">
+        <h3 class="summary-title">Order Summary</h3>
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span id="cartSubtotal">₹0</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping</span>
+          <span style="color: #52c41a; font-weight: 500;">Free</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span id="cartTotal">₹0</span>
+        </div>
+        <button id="checkoutBtn" class="btn btn-primary" style="width: 100%;">
+          Proceed to Checkout
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty Cart State -->
+    <div id="emptyCartState" class="empty-cart-state" style="display: none;">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1.5rem;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+      <h2>Your Cart is Empty</h2>
+      <p style="color: var(--text-light); margin-bottom: 2rem;">Explore our curated collection and add some essentials.</p>
+      <a href="/index.html" class="btn btn-primary">Continue Shopping</a>
+    </div>
+  </main>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4 class="footer-logo-container">
+          <img src="/images/logo.svg" alt="TAGO Logo" class="brand-logo-img">
+        </h4>
+        <p>Curating exceptional products for modern life. Our focus on minimal aesthetics and high-quality materials ensures each piece is both beautiful and built to last.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop Collections</h4>
+        <ul>
+          <li><a href="/index.html">All Products</a></li>
+          <li><a href="/index.html?category=T-Shirts">Premium T-Shirts</a></li>
+          <li><a href="/index.html?category=Hoodies">Cozy Hoodies</a></li>
+          <li><a href="/index.html?category=Backpacks">Travel Backpacks</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Customer Care</h4>
+        <ul>
+          <li><a href="#">Shipping & Returns</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 TAGO E-Commerce. All rights reserved. Designed for excellence.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/cart.js"></script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Securely complete your TAGO order. Fill shipping details and finalize payment mockups.">
+  <title>TAGO | Checkout</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <div class="navbar">
+      <div class="logo-container">
+        <a href="/index.html" class="logo-link">
+          <img src="/images/logo.svg" alt="TAGO Logo" class="brand-logo-img">
+        </a>
+      </div>
+
+      <!-- Live Search -->
+      <div class="search-bar-container">
+        <span class="search-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+      </div>
+
+      <!-- Navigation & Actions -->
+      <nav>
+        <ul class="nav-links" id="authLinks">
+          <!-- Dynamically populated by main.js -->
+          <li><a href="/auth.html" id="navLoginLink">Login / Register</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="/cart.html" class="cart-icon-container" title="View Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <main class="fade-in">
+    <h1 style="font-size: 2.2rem; margin-bottom: 2rem;">Checkout</h1>
+
+    <div class="checkout-layout">
+      <!-- Left Column: Shipping & Payment Details -->
+      <div>
+        <!-- Shipping Address Form -->
+        <div class="checkout-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
+            <h3 style="margin-bottom: 0; border: none; padding: 0;">1. Shipping Address</h3>
+            <div id="savedAddressesDropdownContainer" style="display: none; align-items: center; gap: 0.5rem;">
+              <label for="savedAddressesSelect" style="font-size: 0.85rem; font-weight: 500; color: var(--text-light);">Use Saved:</label>
+              <select id="savedAddressesSelect" class="form-control" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: var(--border-radius-sm); border-color: var(--primary-color);">
+                <option value="">-- Select Address --</option>
+              </select>
+            </div>
+          </div>
+          <form id="checkoutForm">
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" class="form-control" placeholder="Enter full name" required>
+              </div>
+              <div class="form-group full-width">
+                <label for="addressLine">Street Address</label>
+                <input type="text" id="addressLine" class="form-control" placeholder="123 Main Street, Apt 4" required>
+              </div>
+              <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" class="form-control" placeholder="City" required>
+              </div>
+              <div class="form-group">
+                <label for="state">State / Province</label>
+                <input type="text" id="state" class="form-control" placeholder="State" required>
+              </div>
+              <div class="form-group">
+                <label for="postalCode">Postal / ZIP Code</label>
+                <input type="text" id="postalCode" class="form-control" placeholder="Zip code" required>
+              </div>
+              <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" id="country" class="form-control" placeholder="Country" required>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Payment Mockup Form -->
+        <div class="checkout-section">
+          <h3>2. Mock Payment Card</h3>
+          
+          <!-- Mock Card Graphics -->
+          <div class="mock-card-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+              <div class="card-chip"></div>
+              <div style="font-family: 'Outfit'; font-weight: 600; font-size: 1.1rem; letter-spacing: 1px;">MOCK CARD</div>
+            </div>
+            <div class="card-number-mock" id="cardNoPreview">•••• •••• •••• ••••</div>
+            <div class="card-footer-mock">
+              <div>
+                <div style="font-size: 0.6rem; opacity: 0.6;">Card Holder</div>
+                <div id="cardNamePreview" style="font-weight: 600; font-size: 0.9rem;">CARDHOLDER NAME</div>
+              </div>
+              <div>
+                <div style="font-size: 0.6rem; opacity: 0.6;">Expires</div>
+                <div id="cardExpiryPreview" style="font-weight: 600; font-size: 0.9rem;">MM/YY</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Form Inputs -->
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="cardNo">Card Number</label>
+              <input type="text" id="cardNo" class="form-control" placeholder="4111 2222 3333 4444" maxlength="19" required>
+            </div>
+            <div class="form-group">
+              <label for="cardName">Card Holder Name</label>
+              <input type="text" id="cardName" class="form-control" placeholder="Enter cardholder name" required>
+            </div>
+            <div class="form-group">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div>
+                  <label for="cardExpiry">Expiry</label>
+                  <input type="text" id="cardExpiry" class="form-control" placeholder="12/28" maxlength="5" required>
+                </div>
+                <div>
+                  <label for="cardCvv">CVV</label>
+                  <input type="password" id="cardCvv" class="form-control" placeholder="•••" maxlength="3" required>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Order Review & Placement -->
+      <div class="checkout-section" style="position: sticky; top: 120px;">
+        <h3>Order Summary</h3>
+        <div id="checkoutSummaryItems" style="max-height: 250px; overflow-y: auto; margin-bottom: 1.5rem;">
+          <!-- List of checkout items (Dynamic) -->
+        </div>
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span id="checkoutSubtotal">₹0</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping</span>
+          <span style="color: #52c41a; font-weight: 500;">Free</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span id="checkoutTotal">₹0</span>
+        </div>
+        <button id="placeOrderBtn" class="btn btn-primary" style="width: 100%;">
+          Place Mock Order
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4 class="footer-logo-container">
+          <img src="/images/logo.svg" alt="TAGO Logo" class="brand-logo-img">
+        </h4>
+        <p>Curating exceptional products for modern life. Our focus on minimal aesthetics and high-quality materials ensures each piece is both beautiful and built to last.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop Collections</h4>
+        <ul>
+          <li><a href="/index.html">All Products</a></li>
+          <li><a href="/index.html?category=T-Shirts">Premium T-Shirts</a></li>
+          <li><a href="/index.html?category=Hoodies">Cozy Hoodies</a></li>
+          <li><a href="/index.html?category=Backpacks">Travel Backpacks</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Customer Care</h4>
+        <ul>
+          <li><a href="#">Shipping & Returns</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 TAGO E-Commerce. All rights reserved. Designed for excellence.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script src="/js/checkout.js"></script>
+</body>
+</html>
